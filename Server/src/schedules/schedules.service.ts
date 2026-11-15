@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model, Types } from 'mongoose';
+import { QueryFilter, Model, Types } from 'mongoose';
 import { Schedule } from './schemas/schedule.schema';
 import {
   CreateScheduleDto,
@@ -31,7 +31,7 @@ export class SchedulesService {
     const to = new Date(query.to);
     if (from > to) throw new BadRequestException('"from" must be before "to"');
 
-    const filter: FilterQuery<Schedule> = { start: { $gte: from, $lte: to } };
+    const filter: QueryFilter<Schedule> = { start: { $gte: from, $lte: to } };
     if (query.medicalStaffId) filter.medicalStaffId = new Types.ObjectId(query.medicalStaffId);
 
     const docs = (await this.model.find(filter).sort({ start: 1 }).lean()) as ScheduleLean[];
